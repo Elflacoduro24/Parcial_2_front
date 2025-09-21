@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>To-Do - Parcial 2</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+<h1>Mis Tareas</h1>
+<button id="logoutBtn" class="btn small">Logout</button>
+</header>
+
+<main class="main-grid">
+<section class="card">
+<form id="taskForm" class="form">
+<label for="taskText">Nueva tarea</label>
+<input id="taskText" name="taskText" type="text" placeholder="Describe la tarea (mín 10 caracteres)" required />
+<div class="row">
+<button type="submit" class="btn">Agregar</button>
+<button type="button" id="clearAll" class="btn ghost">Borrar todas</button>
+</div>
+<p id="taskError" class="error" aria-live="polite"></p>
+</form>
+
+<h2>Lista</h2>
+<ul id="todoList" class="todo-list" aria-live="polite"></ul>
+</section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
