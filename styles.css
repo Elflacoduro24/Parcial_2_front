@@ -3,6 +3,8 @@
 --card:#ffffff;
 --accent:#2b6cb0;
 --muted:#6b7280;
+--external: #805ad5;
+--local: #38a169;
 }
 *{
     box-sizing:border-box;
@@ -68,10 +70,24 @@ input[type=text],input[type=password]
 .error{color:#b91c1c;font-size:0.9rem;margin:0}
 .todo-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
 .todo-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;border:1px solid #eef4fb}
-.todo-left{display:flex;align-items:center;gap:10px}
-.todo-text{max-width:520px}
+.todo-left{display:flex;align-items:center;gap:10px; flex-wrap: wrap;}
+.todo-text{max-width:520px; word-break: break-word;}
 .todo-text.done{text-decoration:line-through;opacity:0.6}
 .controls{display:flex;gap:8px}
 .icon-btn{background:transparent;border:1px solid transparent;padding:6px;border-radius:8px;cursor:pointer}
 .small-meta{font-size:0.8rem;color:var(--muted)}
+.source-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+.source-local {
+  background-color: var(--local);
+  color: white;
+}
+.source-external {
+  background-color: var(--external);
+  color: white;
+}
 @media (max-width:520px){.card{padding:16px}}

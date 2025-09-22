@@ -22,6 +22,24 @@ function registerUser(username, password) {
   return { ok: true, msg: 'Usuario registrado con éxito' }
 }
 
+// Obtener el usuario actualmente autenticado
+function getCurrentUser() {
+  const authData = localStorage.getItem(authKey)
+  return authData ? JSON.parse(authData).username : null
+}
+
+// Obtener clave específica para las tareas del usuario
+function getUserTodosKey() {
+  const username = getCurrentUser()
+  return username ? `${todosKey}_${username}` : todosKey
+}
+
+// Obtener clave específica para las tareas externas del usuario
+function getUserExternalKey() {
+  const username = getCurrentUser()
+  return username ? `${externalKey}_${username}` : externalKey
+}
+
 // --- LOGIN PAGE ---
 if (location.pathname.endsWith('index.html') || location.pathname === '/' || location.pathname.endsWith('/')) {
   const form = document.getElementById('loginForm')
@@ -73,14 +91,25 @@ if (location.pathname.endsWith('todo.html')) {
     location.href = 'index.html'
   })
 
-  let todos = JSON.parse(localStorage.getItem(todosKey) || '[]')
-  let external = JSON.parse(localStorage.getItem(externalKey) || '[]')
+  // Usar claves específicas por usuario
+  const userTodosKey = getUserTodosKey()
+  const userExternalKey = getUserExternalKey()
+  
+  let todos = JSON.parse(localStorage.getItem(userTodosKey) || '[]')
+  let external = JSON.parse(localStorage.getItem(userExternalKey) || '[]')
 
-  function saveLocal() { localStorage.setItem(todosKey, JSON.stringify(todos)) }
+  function saveLocal() { localStorage.setItem(userTodosKey, JSON.stringify(todos)) }
   function render() {
     todoList.innerHTML = ''
-    todos.forEach(t => { todoList.appendChild(buildItem(t, true)) })
-    external.forEach(t => { todoList.appendChild(buildItem(t, false)) })
+    
+    // Combinar y ordenar por fecha (más recientes primero)
+    const allTasks = [...todos, ...external]
+    allTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    
+    allTasks.forEach(t => { 
+      const isLocal = todos.some(item => item.id === t.id)
+      todoList.appendChild(buildItem(t, isLocal)) 
+    })
   }
 
   function buildItem(t, editable) {
@@ -93,6 +122,7 @@ if (location.pathname.endsWith('todo.html')) {
     const cb = document.createElement('input')
     cb.type = 'checkbox'
     cb.checked = !!t.done
+    cb.disabled = !editable // Deshabilitar checkbox para tareas externas
     cb.addEventListener('change', () => {
       if (!editable) return
       t.done = cb.checked
@@ -105,6 +135,11 @@ if (location.pathname.endsWith('todo.html')) {
     txt.className = 'todo-text'
     txt.textContent = t.text
     if (t.done) txt.classList.add('done')
+    
+    // Indicador de origen (local/externo)
+    const source = document.createElement('div')
+    source.className = 'small-meta'
+    source.textContent = editable ? 'Local' : 'Externo'
 
     const meta = document.createElement('div')
     meta.className = 'small-meta'
@@ -112,6 +147,7 @@ if (location.pathname.endsWith('todo.html')) {
 
     left.appendChild(cb)
     left.appendChild(txt)
+    left.appendChild(source)
     left.appendChild(meta)
 
     const controls = document.createElement('div')
@@ -141,7 +177,7 @@ if (location.pathname.endsWith('todo.html')) {
     return li
   }
 
-  function isOnlyNumbers(s) { return /^\\d+$/.test(s) }
+  function isOnlyNumbers(s) { return /^\d+$/.test(s) }
 
   function validateText(s, idToIgnore) {
     if (!s) return 'El texto no puede estar vacío'
@@ -193,7 +229,8 @@ if (location.pathname.endsWith('todo.html')) {
 
   render()
 
-  fetch('https://dummyjson.com/c/28e8-a101-22-11')
+  // Llamada a la API externa
+  fetch('https://dummyjson.com/c/28e8-a101-4223-a35c')
     .then(r => r.json())
     .then(data => {
       if (!Array.isArray(data)) return

@@ -9,7 +9,7 @@
 <body>
 
 <header class="header">
-<h1>Mis Tareas</h1>
+<h1>Mis Tareas<span id="usernameDisplay"></span></h1>
 <button id="logoutBtn" class="btn small">Logout</button>
 </header>
 
@@ -25,7 +25,8 @@
 <p id="taskError" class="error" aria-live="polite"></p>
 </form>
 
-<h2>Lista</h2>
+<h2>Lista de Tareas</h2>
+<p class="small-meta">Las tareas se ordenan por fecha de creación (más recientes primero)</p>
 <ul id="todoList" class="todo-list" aria-live="polite"></ul>
 </section>
 </main>
